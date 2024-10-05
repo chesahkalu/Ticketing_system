@@ -1,6 +1,6 @@
 # Ticketing_system
 
-A fully functional help desk system deployed on an Azure virtual machine, using osTicket 1.17.2. This documentation is a guide through the installation, configuration, troubleshooting of the system, and provide a user guide for both employees and IT staff.
+A fully functional help desk system deployed on an Azure virtual machine, using osTicket 1.17.2. This documentation is guide through the installation, configuration, troubleshooting of the system, and provide a user guide for both employees and IT staff.
 
 ## Table of Contents
 
@@ -115,13 +115,13 @@ Add common ticket categories like **Password Reset**, **Network Issues**, and se
 ## User Guide
 
 ### For Employees/Users
-- Access the client portal at `http://52.156.20.186`.
+- Access the client portal at `<osTicket-URL>`.
 - Click on **Open a New Ticket**.
 - Select a **Help Topic** (e.g., Password Reset) and fill out the required fields.
 - Submit the ticket and you’ll receive an email confirmation with your ticket ID.
 
 ### For IT Staff
-- Log in to the admin panel at `http://52.156.20.186/scp`.
+- Log in to the admin panel at `<osTicket-URL>/scp`.
 - View assigned tickets under **Tickets → Open**.
 - Respond to tickets by adding internal notes or replying directly to users.
 - Update ticket statuses (Open, In Progress, Closed) as necessary.
