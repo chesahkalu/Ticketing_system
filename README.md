@@ -1,6 +1,6 @@
 # Ticketing_system
 
-A fully functional help desk system deployed on an Azure virtual machine, using osTicket 1.17.2. This documentation is guide through the installation, configuration, troubleshooting of the system, and provide a user guide for both employees and IT staff.
+A fully functional help desk system deployed on an Azure virtual machine, using osTicket 1.17.2. This documentation is a guide through the installation, configuration, troubleshooting of the system, and provide a user guide for both employees and IT staff.
 
 ## Table of Contents
 
@@ -137,9 +137,3 @@ Add common ticket categories like **Password Reset**, **Network Issues**, and se
 - **Azure Cloud**
 
 ---
-
-### Important Notes:
-1. Replace `<your-VM-IP>` with the actual IP address of your Azure VM where osTicket is hosted.
-2. Replace `<osTicket-URL>` with the actual URL to your osTicket instance.
-3. Replace `<Your-Live-Demo-Link>` with the URL to your live demo, if you’ve deployed it for public viewing.
-4. Replace `<Your-GitHub-Repo-Link>` with the actual GitHub repository link where you host the documentation and any related files.
