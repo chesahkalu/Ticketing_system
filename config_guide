@@ -1,0 +1,168 @@
+### osTicket Configuration Files
+
+Below are the necessary configuration files for setting up osTicket on an Azure VM with a LAMP stack. These files help define the database connection, permissions, and other settings for a successful deployment.
+
+#### 1. Apache Virtual Host Configuration (`/etc/apache2/sites-available/osticket.conf`)
+
+**Create the Apache configuration file by running:**
+```bash
+sudo nano /etc/apache2/sites-available/osticket.conf
+```
+
+**Add the following content to the file:**
+```apache
+<VirtualHost *:80>
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/html
+    ServerName your-domain.com
+    
+    <Directory /var/www/html>
+        Options FollowSymLinks
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    # Enable Rewrite Engine for URL rewriting
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</VirtualHost>
+```
+- **Note**: Replace `your-domain.com` with the domain name or IP address of your server.
+- **Save and exit** the file by pressing `CTRL+X`, then `Y`, and `Enter`.
+
+**Enable the site and restart Apache:**
+```bash
+sudo a2ensite osticket.conf
+sudo systemctl restart apache2
+```
+
+#### 2. PHP Configuration (`/etc/php/7.4/apache2/php.ini`)
+
+**Open the PHP configuration file by running:**
+```bash
+sudo nano /etc/php/7.4/apache2/php.ini
+```
+
+**Modify the following settings to ensure compatibility with osTicket:**
+```ini
+max_execution_time = 300
+memory_limit = 256M
+file_uploads = On
+upload_max_filesize = 10M
+post_max_size = 20M
+date.timezone = America/New_York
+```
+- **Note**: Adjust `date.timezone` to match your timezone.
+- **Save and exit** the file by pressing `CTRL+X`, then `Y`, and `Enter`.
+
+**Restart Apache to apply changes:**
+```bash
+sudo systemctl restart apache2
+```
+
+#### 3. MySQL Configuration (`/etc/mysql/mysql.conf.d/mysqld.cnf`)
+
+**Open the MySQL configuration file by running:**
+```bash
+sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+```
+
+**Add or modify the following settings to optimize osTicket performance:**
+```ini
+[mysqld]
+max_connections = 200
+innodb_file_per_table = 1
+sql_mode = ""
+```
+- **Note**: The `sql_mode` is set to empty to avoid strict mode, which may cause compatibility issues with osTicket.
+- **Save and exit** the file by pressing `CTRL+X`, then `Y`, and `Enter`.
+
+**Restart MySQL to apply changes:**
+```bash
+sudo systemctl restart mysql
+```
+
+#### 4. osTicket Configuration (`include/ost-config.php`)
+
+**Navigate to the osTicket directory and create the configuration file:**
+```bash
+cd /var/www/html
+sudo cp include/ost-sampleconfig.php include/ost-config.php
+```
+
+**Open the configuration file by running:**
+```bash
+sudo nano include/ost-config.php
+```
+
+**Update the file to include the following content (ensure the database credentials match the ones created during setup):**
+```php
+<?php
+# osTicket Configuration
+
+define('OSTINSTALLED', true);
+
+# Database Settings
+define('DBTYPE', 'mysql');
+define('DBHOST', 'localhost');
+define('DBNAME', 'osticket');
+define('DBUSER', 'osticketuser');
+define('DBPASS', 'yourpassword');
+define('TABLE_PREFIX', 'ost_');
+
+# Salt for Cryptography
+define('SECRET_SALT', 'replace_with_your_secret_salt');
+
+?>
+```
+- **Note**: Replace `yourpassword` and `SECRET_SALT` with the values used during the installation.
+- **Save and exit** the file by pressing `CTRL+X`, then `Y`, and `Enter`.
+
+#### 5. Apache Security Configuration (`.htaccess` in `/var/www/html`)
+
+**Create a `.htaccess` file in the osTicket root directory:**
+```bash
+sudo nano /var/www/html/.htaccess
+```
+
+**Add the following content to enhance the security of your osTicket installation:**
+```apache
+# Prevent Directory Listing
+Options -Indexes
+
+# Protect Config Files
+<FilesMatch "\.(php|inc|config|sql)$">
+    Require all denied
+</FilesMatch>
+
+# Protect Against Clickjacking
+Header always append X-Frame-Options DENY
+
+# MIME-Type Security
+Header set X-Content-Type-Options nosniff
+```
+- **Save and exit** the file by pressing `CTRL+X`, then `Y`, and `Enter`.
+
+#### 6. Apache Rewrite Rules (Optional - URL Rewrite)
+
+**To enable cleaner URLs, add rewrite rules to your Virtual Host file or create a `.htaccess` file:**
+
+**Add the following content to your Virtual Host configuration file or `.htaccess` file:**
+```apache
+RewriteEngine On
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)$ index.php [QSA,L]
+```
+
+### Final Steps
+
+After creating or modifying these configuration files, be sure to restart Apache and MySQL to apply the changes:
+```bash
+sudo systemctl restart apache2
+sudo systemctl restart mysql
+```
